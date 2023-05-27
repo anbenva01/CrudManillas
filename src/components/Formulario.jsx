@@ -41,10 +41,10 @@ const Formulario = () => {
             </div>
             <div className="col-4">
                 <h4 className="text-center">Agregar Manillas</h4>
-                <form>
+                <form onSubmit={guardarManilla}>
                     <div className="row">
                     <label>Elija el material:
-                        <select name="material" className="form-control">
+                        <select name="material" onChange={(e)=>setValueMaterial(e.target.value)} value={valueMaterial} className="form-control">
                             <option id="1">Cuero</option>
                             <option id="2">Cuerda</option>
                         </select>
@@ -52,7 +52,7 @@ const Formulario = () => {
                     </div>
                     <div className="row">
                     <label>Elija el dije:
-                        <select name="material" className="form-control">
+                        <select name="material" onChange={(e)=>setValueDije(e.target.value)} value={valueDije} className="form-control">
                             <option id="1">Martillo</option>
                             <option id="2">Ancla</option>
                         </select>
@@ -60,7 +60,7 @@ const Formulario = () => {
                     </div>
                     <div className="row">
                     <label>Elija el tipo:
-                        <select name="material" className="form-control">
+                        <select name="material" onChange={(e)=>setValueTipo(e.target.value)} value={valueTipo} className="form-control">
                             <option id="1">Oro</option>
                             <option id="3">Oro rosado</option>
                             <option id="4">Plata</option>
@@ -69,10 +69,10 @@ const Formulario = () => {
                     </label>
                     </div>      
                     <span>Cantidad</span>
-                    <input type="number"  className="form-control mb-2" placeholder="Ingrese cantidad"/>
+                    <input type="number" onChange={(e)=>setCantidad(e.target.value)} value={cantidad} className="form-control mb-2" placeholder="Ingrese cantidad"/>
                     <div className="row">
                     <label>Elija el tipo de monda:
-                        <select name="material" className="form-control">
+                        <select name="material" onChange={(e)=>setValueTipoMoneda(e.target.value)} value={valueTipoMoneda} className="form-control">
                             <option id="1">Dolar</option>
                             <option id="3">Peso colombiano</option>
                         </select>
