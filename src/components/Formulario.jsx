@@ -4,6 +4,7 @@ import { collection, doc, addDoc, onSnapshot, deleteDoc, updateDoc } from "fireb
 
 const Formulario = () => {
     const [cantidad,setCantidad] = useState("");
+    const [valorUnitario,setValorUnitario] = useState("");
     const [valueMaterial, setValueMaterial] = useState("");
     const [valueDije, setValueDije] = useState("");
     const [valueTipo, setValueTipo] = useState("");
@@ -36,7 +37,8 @@ const Formulario = () => {
                 valueDije:valueDije,
                 valueTipo:valueTipo,
                 valueTipoMoneda:valueTipoMoneda,
-                cantidad:cantidad
+                cantidad:cantidad,
+                valorUnitario: valorUnitario
             })
             setListaManillas([...listaManillas,{
                 valueMaterial:valueMaterial,
@@ -44,6 +46,7 @@ const Formulario = () => {
                 valueTipo:valueTipo,
                 valueTipoMoneda:valueTipoMoneda,
                 cantidad:cantidad,
+                valorUnitario:valorUnitario,
                 id: data.id
             }])
             setCantidad('')
@@ -51,6 +54,7 @@ const Formulario = () => {
             setValueDije('')
             setValueTipo('')
             setValueTipoMoneda('')
+            setValorUnitario('')
         } catch (error) {
             console.log(error)
         }
@@ -64,11 +68,15 @@ const Formulario = () => {
             <div className="col-8">
                 <h4 className="text-center">Listado</h4>
                 <ul className="list-group">
-                    <li className="list-group-item">
-                        <span className="lead">text</span>
-                        <button className="btn btn-danger btn-sm float-end mx-2">Eliminar</button>
-                        <button className="btn btn-warning btn-sm float-end">Editar</button>
-                    </li>
+                    {
+                        listaManillas.map(item=>{
+                            <li key={item.id} className="list-group-item">
+                                <span className="lead">{item.valueMaterial} - {item.valueDije} - {item.valueTipo} - {item.valueTipoMoneda}</span>
+    <                           button className="btn btn-danger btn-sm float-end mx-2">Eliminar</button>
+                                <button className="btn btn-warning btn-sm float-end">Editar</button>
+                            </li>
+                        })
+                    }
                 </ul>
             </div>
             <div className="col-4">
@@ -104,6 +112,10 @@ const Formulario = () => {
                         </select>
                     </label>
                     </div> 
+                    <span>Valor Unitario (en dólares)</span>
+                    <input type="number" onChange={(e)=>setValorUnitario(e.target.value)} value={valorUnitario} className="form-control mb-2" placeholder="Ingrese valor unitario"/>
+                    <span>Total</span>
+                    <input type="number" disabled  className="form-control mb-2"/>
                     <button className="btn btn-primary btn-block">Agregar</button>
                 </form>
             </div>
