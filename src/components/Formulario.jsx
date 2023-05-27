@@ -25,7 +25,43 @@ const Formulario = () => {
             <div className="col-4">
                 <h4 className="text-center">Agregar Manillas</h4>
                 <form>
-                    <input type="text" className="form-control mb-2" placeholder="Ingrese cantidad"/>
+                    <div className="row">
+                    <label>Elija el material:
+                        <select name="material" className="form-control">
+                            <option id="1">Cuero</option>
+                            <option id="2">Cuerda</option>
+                        </select>
+                    </label>
+                    </div>
+                    <div className="row">
+                    <label>Elija el dije:
+                        <select name="material" className="form-control">
+                            <option id="1">Martillo</option>
+                            <option id="2">Ancla</option>
+                        </select>
+                    </label>
+                    </div>
+                    <div className="row">
+                    <label>Elija el tipo:
+                        <select name="material" className="form-control">
+                            <option id="1">Oro</option>
+                            <option id="3">Oro rosado</option>
+                            <option id="4">Plata</option>
+                            <option id="5">Niquel</option>
+                        </select>
+                    </label>
+                    </div>      
+                    <span>Cantidad</span>
+                    <input type="number"  className="form-control mb-2" placeholder="Ingrese cantidad"/>
+                    <div className="row">
+                    <label>Elija el tipo de monda:
+                        <select name="material" className="form-control">
+                            <option id="1">Dolar</option>
+                            <option id="3">Peso colombiano</option>
+                        </select>
+                    </label>
+                    </div> 
+                           
                 </form>
             </div>
         </div>
