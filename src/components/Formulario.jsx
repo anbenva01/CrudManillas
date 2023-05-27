@@ -7,6 +7,23 @@ const Formulario = () => {
     const [valueMaterial, setValueMaterial] = useState("");
     const [valueDije, setValueDije] = useState("");
     const [valueTipo, setValueTipo] = useState("");
+    const [valueTipoMoneda, setValueTipoMoneda] = useState("");
+    
+    const guardarManilla = async(e) =>{
+        e.preventDefault();
+        try {
+            const data = await addDoc(collection(db,'manillas'){
+                valueMaterial:valueMaterial,
+                valueDije:valueDije,
+                valueTipo,valueTipo,
+                valueTipoMoneda:valueTipoMoneda,
+                cantidad:cantidad
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    } 
+    
     return (
     <div className="container mt-5">
         <h1 className="text-center">CRUD DE MANILLAS</h1>
@@ -61,7 +78,7 @@ const Formulario = () => {
                         </select>
                     </label>
                     </div> 
-                           
+                    <button className="btn btn-primary btn-block">Agregar</button>
                 </form>
             </div>
         </div>
