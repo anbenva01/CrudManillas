@@ -10,7 +10,12 @@ const Formulario = () => {
     return (
     <div className="container mt-5">
         <h1 className="text-center">CRUD DE MANILLAS</h1>
-        </hr>
+        <hr/>
+        <div className="row">
+            <div className="col-8">
+                <h4 className="text-center">Listado</h4>
+            </div>
+        </div>
     </div>
   )
 }
