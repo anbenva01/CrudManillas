@@ -10,16 +10,19 @@ const Formulario = () => {
     const [valueTipo, setValueTipo] = useState("");
     const [valueTipoMoneda, setValueTipoMoneda] = useState("");
     const [listaManillas, setListaManillas] = useState([]);
-    const cbMaterial = [{value: "cuero", name: "Cuero"},{value: "cuerda", name: "Cuerda"}];
-    const cbDije = [{value: "martillo", name: "Martillo"},{value: "ancla", name: "Ancla"}];
-    const cbTipo = [{value: "oro", name: "Oro"},{value: "oro rosado", name: "Oro rosado"},{value: "niquel", name: "Niquel"},{value: "plata", name: "Plata"}];
-    const cbTipoMoneda= [{value: "dolar", name: "Dolar"},{value: "peso", name: "Peso colombiano"}];
+    const [result, setResult] = React.useState();
+    const [id,setId] = useState(0);
+    const cbMaterial = [{value: "seleccionar", name: "Seleccionar"},{value: "cuero", name: "Cuero"},{value: "cuerda", name: "Cuerda"}];
+    const cbDije = [{value: "seleccionar", name: "Seleccionar"},{value: "martillo", name: "Martillo"},{value: "ancla", name: "Ancla"}];
+    const cbTipo = [{value: "seleccionar", name: "Seleccionar"},{value: "oro", name: "Oro"},{value: "oro rosado", name: "Oro rosado"},{value: "niquel", name: "Niquel"},{value: "plata", name: "Plata"}];
+    const cbTipoMoneda= [{value: "seleccionar", name: "Seleccionar"},{value: "dolar", name: "Dolar"},{value: "peso", name: "Peso colombiano"}];
     
     useEffect(()=>{
         const obtenerLista = async() =>{
             try {
                 await onSnapshot(collection(db,'manillas'),(query)=>{
-                    setListaManillas(query.docs.map((doc)=>({...doc.data(), id:doc.id})))
+                    setListaManillas(query.docs.map((doc)=>{
+                        return {...doc.data(), id:doc.id}}))
                 })
             } catch (error) {
                 console.log(error)
@@ -38,7 +41,8 @@ const Formulario = () => {
                 valueTipo:valueTipo,
                 valueTipoMoneda:valueTipoMoneda,
                 cantidad:cantidad,
-                valorUnitario: valorUnitario
+                valorUnitario: valorUnitario,
+                result:result
             })
             setListaManillas([...listaManillas,{
                 valueMaterial:valueMaterial,
@@ -47,6 +51,7 @@ const Formulario = () => {
                 valueTipoMoneda:valueTipoMoneda,
                 cantidad:cantidad,
                 valorUnitario:valorUnitario,
+                result:result,
                 id: data.id
             }])
             setCantidad('')
@@ -55,10 +60,24 @@ const Formulario = () => {
             setValueTipo('')
             setValueTipoMoneda('')
             setValorUnitario('')
+            setResult('')
         } catch (error) {
             console.log(error)
         }
-    } 
+    }
+    
+    const MonedaProducto = function () {
+        console.log(valueTipoMoneda)
+        if(valueTipoMoneda != 'Seleccionar'){
+            if(valueTipoMoneda == 'Dolar'){
+                setResult(cantidad * valorUnitario);
+                console.log(cantidad * valorUnitario)
+            }else{
+                setResult((cantidad * valorUnitario)/5000);
+                console.log((cantidad * valorUnitario)/5000)
+            }
+        }        
+      };
     
     return (
     <div className="container mt-5">
@@ -68,11 +87,12 @@ const Formulario = () => {
             <div className="col-8">
                 <h4 className="text-center">Listado</h4>
                 <ul className="list-group">
-                    {
+                    ddddd
+                    {                        
                         listaManillas.map(item=>{
                             <li key={item.id} className="list-group-item">
-                                <span className="lead">{item.valueMaterial} - {item.valueDije} - {item.valueTipo} - {item.valueTipoMoneda}</span>
-    <                           button className="btn btn-danger btn-sm float-end mx-2">Eliminar</button>
+                                <span className="lead">{item.valorUnitario}</span>
+                                <button className="btn btn-danger btn-sm float-end mx-2">Eliminar</button>
                                 <button className="btn btn-warning btn-sm float-end">Editar</button>
                             </li>
                         })
@@ -113,9 +133,12 @@ const Formulario = () => {
                     </label>
                     </div> 
                     <span>Valor Unitario (en dólares)</span>
-                    <input type="number" onChange={(e)=>setValorUnitario(e.target.value)} value={valorUnitario} className="form-control mb-2" placeholder="Ingrese valor unitario"/>
+                    <input type="number" onKeyUp={MonedaProducto} onChange={(e)=>setValorUnitario(e.target.value)} value={valorUnitario} className="form-control mb-2" placeholder="Ingrese valor unitario"/>
+                    
+                    <div className="row">
                     <span>Total</span>
-                    <input type="number" disabled  className="form-control mb-2"/>
+                    <input type="number" disabled value={result} className="form-control mb-2"/>
+                    </div>                    
                     <button className="btn btn-primary btn-block">Agregar</button>
                 </form>
             </div>
