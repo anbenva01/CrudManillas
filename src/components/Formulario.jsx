@@ -12,7 +12,7 @@ const Formulario = () => {
     const guardarManilla = async(e) =>{
         e.preventDefault();
         try {
-            const data = await addDoc(collection(db,'manillas'){
+            const data = await addDoc(collection(db,'manillas'),{
                 valueMaterial:valueMaterial,
                 valueDije:valueDije,
                 valueTipo,valueTipo,
