@@ -8,17 +8,49 @@ const Formulario = () => {
     const [valueDije, setValueDije] = useState("");
     const [valueTipo, setValueTipo] = useState("");
     const [valueTipoMoneda, setValueTipoMoneda] = useState("");
+    const [listaManillas, setListaManillas] = useState([]);
+    const cbMaterial = [{value: "cuero", name: "Cuero"},{value: "cuerda", name: "Cuerda"}];
+    const cbDije = [{value: "martillo", name: "Martillo"},{value: "ancla", name: "Ancla"}];
+    const cbTipo = [{value: "oro", name: "Oro"},{value: "oro rosado", name: "Oro rosado"},{value: "niquel", name: "Niquel"},{value: "plata", name: "Plata"}];
+    const cbTipoMoneda= [{value: "dolar", name: "Dolar"},{value: "peso", name: "Peso colombiano"}];
     
+    useEffect(()=>{
+        const obtenerLista = async() =>{
+            try {
+                await onSnapshot(collection(db,'manillas'),(query)=>{
+                    setListaManillas(query.docs.map((doc)=>({...doc.data(), id:doc.id})))
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        obtenerLista();
+    },[])
+
+
     const guardarManilla = async(e) =>{
         e.preventDefault();
         try {
             const data = await addDoc(collection(db,'manillas'),{
                 valueMaterial:valueMaterial,
                 valueDije:valueDije,
-                valueTipo,valueTipo,
+                valueTipo:valueTipo,
                 valueTipoMoneda:valueTipoMoneda,
                 cantidad:cantidad
             })
+            setListaManillas([...listaManillas,{
+                valueMaterial:valueMaterial,
+                valueDije:valueDije,
+                valueTipo:valueTipo,
+                valueTipoMoneda:valueTipoMoneda,
+                cantidad:cantidad,
+                id: data.id
+            }])
+            setCantidad('')
+            setValueMaterial('')
+            setValueDije('')
+            setValueTipo('')
+            setValueTipoMoneda('')
         } catch (error) {
             console.log(error)
         }
@@ -45,36 +77,30 @@ const Formulario = () => {
                     <div className="row">
                     <label>Elija el material:
                         <select name="material" onChange={(e)=>setValueMaterial(e.target.value)} value={valueMaterial} className="form-control">
-                            <option id="1">Cuero</option>
-                            <option id="2">Cuerda</option>
+                            {cbMaterial.map(cb1 => <option key={cb1.value} id={cb1.value}>{cb1.name}</option>)}
                         </select>
                     </label>
                     </div>
                     <div className="row">
                     <label>Elija el dije:
-                        <select name="material" onChange={(e)=>setValueDije(e.target.value)} value={valueDije} className="form-control">
-                            <option id="1">Martillo</option>
-                            <option id="2">Ancla</option>
+                        <select name="dije" onChange={(e)=>setValueDije(e.target.value)} value={valueDije} className="form-control">
+                        {cbDije.map(cb2 => <option key={cb2.value} id={cb2.value}>{cb2.name}</option>)}
                         </select>
                     </label>
                     </div>
                     <div className="row">
                     <label>Elija el tipo:
-                        <select name="material" onChange={(e)=>setValueTipo(e.target.value)} value={valueTipo} className="form-control">
-                            <option id="1">Oro</option>
-                            <option id="3">Oro rosado</option>
-                            <option id="4">Plata</option>
-                            <option id="5">Niquel</option>
+                        <select name="tipo" onChange={(e)=>setValueTipo(e.target.value)} value={valueTipo} className="form-control">
+                        {cbTipo.map(cb3 => <option key={cb3.value} id={cb3.value}>{cb3.name}</option>)}
                         </select>
                     </label>
                     </div>      
                     <span>Cantidad</span>
                     <input type="number" onChange={(e)=>setCantidad(e.target.value)} value={cantidad} className="form-control mb-2" placeholder="Ingrese cantidad"/>
                     <div className="row">
-                    <label>Elija el tipo de monda:
-                        <select name="material" onChange={(e)=>setValueTipoMoneda(e.target.value)} value={valueTipoMoneda} className="form-control">
-                            <option id="1">Dolar</option>
-                            <option id="3">Peso colombiano</option>
+                    <label>Elija el tipo de moneda:
+                        <select name="tipo_moneda" onChange={(e)=>setValueTipoMoneda(e.target.value)} value={valueTipoMoneda} className="form-control">
+                        {cbTipoMoneda.map(cb3 => <option key={cb3.value} id={cb3.value}>{cb3.name}</option>)}
                         </select>
                     </label>
                     </div> 
