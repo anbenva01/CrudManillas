@@ -12,6 +12,7 @@ const Formulario = () => {
     const [listaManillas, setListaManillas] = useState([]);
     const [result, setResult] = React.useState();
     const [id,setId] = useState(0);
+    const [modoEdicion, setModoEdicion] = useState(false);
     const cbMaterial = [{value: "seleccionar", name: "Seleccionar"},{value: "cuero", name: "Cuero"},{value: "cuerda", name: "Cuerda"}];
     const cbDije = [{value: "seleccionar", name: "Seleccionar"},{value: "martillo", name: "Martillo"},{value: "ancla", name: "Ancla"}];
     const cbTipo = [{value: "seleccionar", name: "Seleccionar"},{value: "oro", name: "Oro"},{value: "oro rosado", name: "Oro rosado"},{value: "niquel", name: "Niquel"},{value: "plata", name: "Plata"}];
@@ -66,42 +67,127 @@ const Formulario = () => {
         }
     }
     
+    const cancelar = () =>{
+        setModoEdicion(false)
+        setCantidad('')
+        setValueMaterial('')
+        setValueDije('')
+        setValueTipo('')
+        setValueTipoMoneda('')
+        setValorUnitario('')
+        setResult('')
+        setId('')
+    }
+
+    const eliminarLista = async id => {
+        try {
+            await deleteDoc(doc(db,'manillas',id))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const editarLista = item =>{
+        setCantidad(item.cantidad)
+        setValueMaterial(item.valueMaterial)
+        setValueDije(item.valueDije)
+        setValueTipo(item.valueTipo)
+        setValueTipoMoneda(item.valueTipoMoneda)
+        setValorUnitario(item.valorUnitario)
+        setResult(item.result)
+        editable(item);
+    }
+
+    const editable = item => {
+        setCantidad(item.cantidad)
+        setValueMaterial(item.valueMaterial)
+        setValueDije(item.valueDije)
+        setValueTipo(item.valueTipo)
+        setValueTipoMoneda(item.valueTipoMoneda)
+        setValorUnitario(item.valorUnitario)
+        setResult(item.result)
+        setId(item.id)
+        setModoEdicion(true)
+    }
+
+     const editarManillas = async(e) =>{
+        e.preventDefault();
+        try {
+            const docRef = doc(db,'manillas',id);
+            await updateDoc(docRef,{
+                valueMaterial:valueMaterial,
+                valueDije:valueDije,
+                valueTipo:valueTipo,
+                valueTipoMoneda:valueTipoMoneda,
+                cantidad:cantidad,
+                valorUnitario: valorUnitario,
+                result:result
+            })
+            const nuevoArray = listaManillas.map(
+                item => item.id === id ? {
+                    id:id,
+                    valueMaterial:valueMaterial,
+                    valueDije:valueDije,
+                    valueTipo:valueTipo,
+                    valueTipoMoneda:valueTipoMoneda,
+                    cantidad:cantidad,
+                    valorUnitario: valorUnitario,
+                    result:result
+                }:item
+            )
+            setListaManillas(nuevoArray);
+            setCantidad('')
+            setValueMaterial('')
+            setValueDije('')
+            setValueTipo('')
+            setValueTipoMoneda('')
+            setValorUnitario('')
+            setResult('')
+            setId('')
+            setModoEdicion(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const MonedaProducto = function () {
-        console.log(valueTipoMoneda)
         if(valueTipoMoneda != 'Seleccionar'){
             if(valueTipoMoneda == 'Dolar'){
                 setResult(cantidad * valorUnitario);
-                console.log(cantidad * valorUnitario)
             }else{
                 setResult((cantidad * valorUnitario)/5000);
-                console.log((cantidad * valorUnitario)/5000)
             }
         }        
       };
     
     return (
     <div className="container mt-5">
-        <h1 className="text-center">CRUD DE MANILLAS</h1>
+        <h1 className="text-center">Manillas El Benju</h1>
         <hr/>
         <div className="row">
             <div className="col-8">
                 <h4 className="text-center">Listado</h4>
                 <ul className="list-group">
-                    ddddd
-                    {                        
-                        listaManillas.map(item=>{
-                            <li key={item.id} className="list-group-item">
-                                <span className="lead">{item.valorUnitario}</span>
-                                <button className="btn btn-danger btn-sm float-end mx-2">Eliminar</button>
-                                <button className="btn btn-warning btn-sm float-end">Editar</button>
-                            </li>
-                        })
+                    {         
+                    listaManillas.map(item=>(
+                        <li key={item.id} className="list-group-item">
+                            <span className="lead">Material: {item.valueMaterial}</span><br/>
+                            <span className="lead">Dije: {item.valueDije}</span><br/>
+                            <span className="lead">Tipo: {item.valueTipo}</span><br/>
+                            <span className="lead">Tipo Moneda: {item.valueTipoMoneda}</span><br/>
+                            <span className="lead">Cantidad: {item.cantidad}</span><br/>
+                            <span className="lead">Valor Unitario: {item.valorUnitario}</span><br/>
+                            <span className="lead">Total: {item.result}</span>
+                            <button className="btn btn-danger btn-sm float-end mx-2" onClick={()=>eliminarLista(item.id)}>Eliminar</button>
+                            <button className="btn btn-warning btn-sm float-end" onClick={()=>editarLista(item)}>Editar</button>
+                        </li>
+                    ))         
                     }
                 </ul>
             </div>
             <div className="col-4">
-                <h4 className="text-center">Agregar Manillas</h4>
-                <form onSubmit={guardarManilla}>
+                <h4 className="text-center">{modoEdicion ? 'Editar Manillas' : 'Agregar Manillas'}</h4>
+                <form onSubmit={modoEdicion ? editarManillas : guardarManilla}>
                     <div className="row">
                     <label>Elija el material:
                         <select name="material" onChange={(e)=>setValueMaterial(e.target.value)} value={valueMaterial} className="form-control">
@@ -139,7 +225,12 @@ const Formulario = () => {
                     <span>Total</span>
                     <input type="number" disabled value={result} className="form-control mb-2"/>
                     </div>                    
-                    <button className="btn btn-primary btn-block">Agregar</button>
+                    {
+                    modoEdicion ? (
+                        <><button className='btn btn-warning btn-block'>Editar</button>
+                        <button onClick={()=>cancelar()} className='btn btn-dark btn-block mx-2'>Cancelar</button></>
+                    ):(<><button className='btn btn-primary btn-block'>Agregar</button></>)
+                    }
                 </form>
             </div>
         </div>
